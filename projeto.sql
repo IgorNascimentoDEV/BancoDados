@@ -136,14 +136,14 @@ alter table apresentar add hora time not null;
      
 use mydb;
 
-insert into orquestra (idOrquestra, cidade, pais, nome, dataIni)
+insert into orquestra (idOrquestra, cidade, pais, nome, dataIni)  
 	values ("1", "Recife", "Brasil", "Passinho", "2022-08-08"),
 		   ("2", "São Paulo", "Brasil", "Filarmônica de Berlim", "2022-02-26"),
-	       ("3", "New York", "EUA", "Sinfônica de Chicago", "2022-12-24"),		
-	       ("4", "Berlim", "Alemanha", "Sinfônica da Rádio Bavária", "2022-03-23"),
-           ("4", "Sydney", "Australia", "Filarmônica de Viena", "2022-09-25");
+		   ("3", "New York", "EUA", "Sinfônica de Chicago", "2022-12-24"),
+		   ("4", "Berlim", "Alemanha", "Sinfônica da Rádio Bavária", "2022-03-23"),
+		   ("4", "Sydney", "Australia", "Filarmônica de Viena", "2022-09-25");
            
-insert into instrumento (idInstrumento, nome, tipo)
+insert into instrumento (idInstrumentos, nome, tipo)
 	values ("1", "violão", "Corda"),
 		   ("2", "acordeão", "Sopro"),
            ("3", "guitarra", "corda"),
@@ -157,4 +157,5 @@ insert into musico (idMusicos, nome, nacionalidade, nascimento, Orquestra_idOrqu
 		("4", "Ben Hur Queiroz","Chines", '1976-01-07', "3", "2"),
         ("5", "Fellipe Diniz","Mexicano", '1989-06-08', "4", "4");
 
-
+insert into apresenta (Sinfonias_idSinfonia, DataDeApresentacaoOrquestraSinfonia, Orquestra_idOrquestra)
+	value ()
