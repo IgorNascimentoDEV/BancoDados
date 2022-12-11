@@ -132,6 +132,10 @@ ALTER TABLE `Candidato` RENAME COLUMN `status` TO `statusCandidato`;
 ALTER TABLE `Vaga` RENAME COLUMN `idioma` TO `idiomaReq`;
 ALTER TABLE `Telefone` MODIFY COLUMN `numero` VARCHAR(15);
 
+-- -----------------------------------------------------
+-- Inserts
+-- -----------------------------------------------------
+
 INSERT INTO `Candidato`(cpf, `nome`, `email`, `pretencaoSalario`, `notaIdioma`, `notaLogica`, `notaSql`, `statusCandidato`, `descricaoTecnica`)
 VALUE('668.647.910-17', 'Iago', 'iago2000@gmail.com', 3000.00, 8, 7, 9, 'Entrevistar', 'DBA com 6 anos de experiencia'),
 ('012.038.050-12', 'Junior', 'junior69@gmail.com', 2000.00, 9, 8, 6, 'Entrevistar', 'Programador java Spring boot angular 1 ano de experiencia' ),
@@ -141,12 +145,12 @@ VALUE('668.647.910-17', 'Iago', 'iago2000@gmail.com', 3000.00, 8, 7, 9, 'Entrevi
 ('947.114.890-10', 'João', 'joao@Yahoo.com', 9000.00, 6, 8, 9, 'Entrevistar', 'Especialista em CLOUD AWS');
 
 INSERT INTO `Candidato`(`cpf`, `nome`, `email`, `pretencaoSalario`, `notaIdioma`, `notaLogica`, `notaSql`, `statusCandidato`, `nivel`, `descricaoTecnica`, `habilidadesTecnicas`, `habilidadesInterp`)
-VALUE('431.474.740-46', 'Camila', 'camila123@gmail.com', 2500.00, 6, 5, 8, 'Aprovados', 'CL08', 'Progamadora pleno front end', 'HTML5, CSS3, JavaScript', 'boa comunicação, simpatica'),
+VALUE('431.474.740-46', 'Camila', 'camila123@gmail.com', 2500.00, 6, 5, 8, 'Aprovados', 'CL06', 'Progamadora pleno front end', 'HTML5, CSS3, JavaScript', 'boa comunicação, simpatica'),
 ('000.178.810-80', 'Maria', 'mariazinha6969@gmail.com', 3000.00, 7, 9, 8, 'Aprovados', 'CL12', 'Scrum Master', 'conhecimentos em ferramentas de gerenciamento', 'Certificado em metodologia agil'),
 ('861.713.850-50', 'Antony', 'jogadordelol@gmail.com', 2500.00, 3, 2, 5, 'Inapto', 'CL13','Tecnico em informatica', 'tecnico em TI', 'Timido, comunicação não muito boa'),
 ('198.639.230-95', 'Igor', 'contatoigor@gmail.com', 6000.00, 8 , 9, 10, 'Contratados', 'CL06', 'Desenvolvedor fullStack', 'Java, spring, angular, MySql', 'Trabalho em equipe, comunicação clara e objetica'),
 ('679.993.370-30', 'Walter', 'contatowalter@gmail.com', 7000.00, 10, 8, 9, 'Contratados', 'CL08', 'Engenheiro de dados pleno', 'MySql, plSql, sqlServe, MongoBD', 'Inglês avançado, equilibrio emocional'),
-('105.014.920-38', 'Everton', 'contatoeverton@gmail.com', 9000.00, 7, 10, 8, 'Contratados', 'CL07', 'Desenvolvedor Java Senior', 'spring, java, OracleBD', 'Lider de equipe, sabe alemão');
+('105.014.920-38', 'Everton', 'contatoeverton@gmail.com', 9000.00, 7, 10, 8, 'Contratados', 'CL13', 'Desenvolvedor Java Senior', 'spring, java, OracleBD', 'Lider de equipe, sabe alemão');
 
 INSERT INTO Vaga (`nomeVaga`, `descricaoVaga`, `habilidadeReq`, `idiomaReq`, `tempoAlocacao`, `localidade`)
 VALUES('Gestor de RH', 'Atrasa salário', 'MeioCérebro', 'Português(Opcional)', '2030-09-06','Recife - PE'),
@@ -216,6 +220,120 @@ VALUE(100000, 10),
 (100008, 18),
 (100009, 19),
 (100010, 20);
+
+-- -----------------------------------------------------
+-- View 
+-- -----------------------------------------------------
+CREATE VIEW relatorio01 AS
+	SELECT nome,statusCandidato FROM `candidato`
+		WHERE statusCandidato = 'Entrevistar'
+			ORDER BY nome;
+            
+CREATE VIEW relatorio02 AS
+	SELECT nome,statusCandidato FROM `candidato`
+		WHERE statusCandidato = 'Aprovados'
+			ORDER BY nome;
+ 
+CREATE VIEW relatorio03 AS
+	SELECT nome,statusCandidato FROM `candidato`
+		WHERE statusCandidato = 'Inapto'
+			ORDER BY nome;
+            
+CREATE VIEW relatorio04 AS
+	SELECT nome,statusCandidato FROM `candidato`
+		WHERE statusCandidato = 'Contratados'
+			ORDER BY nome;
+
+CREATE VIEW relatorio05 AS
+	SELECT nome,statusCandidato FROM `candidato`
+		WHERE nivel = 'CL06'
+			ORDER BY nome;
+
+CREATE VIEW relatorio06 AS
+	SELECT nome,statusCandidato FROM `candidato`
+		WHERE nivel = 'CL13'
+			ORDER BY nome;
+            
+CREATE VIEW relatorio07 AS
+	SELECT nomeVaga,localidade FROM `vaga`
+		WHERE tempoAlocacao = '2023-01-05'
+			ORDER BY nomeVaga;
+            
+CREATE VIEW relatorio08 AS
+	SELECT nomeVaga,localidade FROM `vaga`
+		WHERE localidade = 'Recife - PE'
+			ORDER BY nomeVaga;
+            
+CREATE VIEW relatorio09 AS
+	SELECT nomeVaga,localidade FROM `vaga`
+		WHERE localidade = 'Olinda - PE'
+			ORDER BY nomeVaga;
+            
+CREATE VIEW relatorio10 AS
+	SELECT Candidato_idCandidato,cidade,bairro FROM `endereco`
+		WHERE cidade = 'Recife'
+			ORDER BY Candidato_idCandidato;
+
+
+-- -----------------------------------------------------
+-- Selects(DQL)
+-- -----------------------------------------------------
+
+/*1º Relatório: Lista de candidatos que ainda não foram entrevistados trazendo seu nome, número de telefone;*/
+
+/*2º Relatório: Lista de candidatos Inaptos trazendo o seu nome e endereço;*/
+
+/*3º Relatório: Lista de candidatos contratados trazendo o nome sua pretensão salarial e o id da vaga;*/
+
+/*4º Relatório: Lista de candidatos aprovados trazendo nome, sua pretensão salarial e sua cidade;*/
+
+/*5º Relatório: Lista de candidatos que tiraram uma nota maior ou igual a 8 em Inglês trazendo seu nome, id da vaga e seu número de telefone;*/
+
+/*6º Relatório: Lista de candidatos que tiraram uma nota maior ou igual a 9 em SQL trazendo seu nome pretensão salarial e cidade;*/
+
+/*7º Relatório: Lista de candidatos que tiraram uma nota maior ou igual a 7 em lógica de programação trazendo seu nome, seu cep e seu número;*/
+
+/*8º Relatório: Lista de candidatos com o nível CL13  trazendo sua descrição técnica, email e seu número;*/
+
+/*9º Relatório: Lista de candidatos que moram em Recife trazendo seu nome, sua cidade e sua rua;*/
+
+/*10º Relatório: Lista de candidatos que moram em Olinda trazendo seu nome, seu número e seu bairro;*/
+
+/*11º Relatório: Lista de candidatos que têm o nível CL06 e que moram em Recife trazendo o id do candidato e seu bairro;*/
+
+/*12º Relatório: Lista de Candidatos que tem sua pretenção salarial entre 2.000 e 5.000 trazendo seu nome, seu nível e sua cidade;*/
+
+/*13º Relatório: Lista de Vagas com o tempo de alocação para o mês 5 de 2023 trazendo o nome da vaga o seu tempo de alocação e o id do candidato;*/
+
+/*14º Relatório: Lista de Vagas que tem Inglês como idioma requerido trazendo o nome da vaga, o id do candidato e seu número;*/
+
+/*15º Relatório: Lista de Vagas que tem tenha como descrição “Desenvolver e implementar bases de dados” trazendo seu nome e o id do candidato;*/
+
+/*16º Relatório: Lista de Vagas com a localidade de Recife trazendo seu nome o tempo de alocação e seu candidato;*/
+
+/*17º Relatório: Lista de Vagas com a localidade de Olinda trazendo seu nome o tempo de alocação e seu candidato;*/
+
+/*18º Relatório: Lista de entrevista que foram ou irão ser realizadas de 11 horas trazendo o seu dia e o id do candidato;*/
+
+/*19º Relatório: Lista de entrevista que iram ocorrer em 2022 trazendo sua data e hora e o id do seu candidato;*/
+
+/*20º Relatório: Lista de entrevista que iram ocorrer em 2023 trazendo sua data e hora e o id do seu candidato;*/
+
+-- -----------------------------------------------------
+-- Procedures e funções
+-- -----------------------------------------------------
+
+DELIMITER $$
+CREATE PROCEDURE buscarCandidatoPorID (id int)
+BEGIN
+SELECT CONCAT('O candidato é ', nome) AS nome
+FROM `candidato`
+WHERE idCandidato = id;
+END$$
+DELIMITER ;
+
+CALL buscarCandidatoPorID(18);
+/*DROP PROCEDURE buscarCandidatoPorID;*/
 
 
 SET SQL_MODE=@OLD_SQL_MODE;
