@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS `mydb`.`Candidato` (
   `notaIdioma` INT NOT NULL,
   `notaLogica` INT NOT NULL,
   `notaSql` INT NOT NULL,
-  `statusCandidato` VARCHAR(15) NOT NULL,
+  `status` VARCHAR(15) NOT NULL,
   `nivel` VARCHAR(4) NULL,
   `descricaoTecnica` TINYTEXT NULL,
   `habilidadesTecnicas` TINYTEXT NULL,
@@ -222,6 +222,25 @@ VALUE(100000, 10),
 (100010, 20);
 
 -- -----------------------------------------------------
+-- Delete
+-- -----------------------------------------------------
+DELETE FROM `mydb`.`Candidato` WHERE (`idCandidato` = '20');
+DELETE FROM `mydb`.`Candidato` WHERE (`idCandidato` = '21');
+DELETE FROM `mydb`.`Entrevista` WHERE (`idEntrevista` = '1010');
+DELETE FROM `mydb`.`Entrevista` WHERE (`idEntrevista` = '1011');
+DELETE FROM `mydb`.`Vaga` WHERE (`idVaga` = '100010');
+DELETE FROM `mydb`.`Endereco` WHERE (`CEP` = '53570-260');
+DELETE FROM `mydb`.`Endereco` WHERE (`CEP` = '55940-970');
+DELETE FROM `mydb`.`Telefone` WHERE (`numero` = '(81) 34794-6613');
+DELETE FROM `mydb`.`Telefone` WHERE (`numero` = '(81) 37013-5938');
+
+-- -----------------------------------------------------
+-- Update
+-- -----------------------------------------------------
+UPDATE `mydb`.`Vaga` SET `nomeVaga` = 'Suporte Técnico', `descricaoVaga` = 'Prestar serviços de suporte e manutenção aos equipamentos da empresa', `habilidadeReq` = 'Hardware, Redes', `idiomaReq` = 'Português' WHERE (`idVaga` = '100000');
+UPDATE `mydb`.`Vaga` SET `idiomaReq` = 'Português' WHERE (`idVaga` = '100005');
+UPDATE `mydb`.`Vaga` SET `idiomaReq` = 'Português' WHERE (`idVaga` = '100006');
+-- -----------------------------------------------------
 -- View 
 -- -----------------------------------------------------
 CREATE VIEW relatorio01 AS
@@ -281,44 +300,119 @@ CREATE VIEW relatorio10 AS
 
 /*1º Relatório: Lista de candidatos que ainda não foram entrevistados trazendo seu nome, número de telefone;*/
 
-/*2º Relatório: Lista de candidatos Inaptos trazendo o seu nome e endereço;*/
-
+/*2º Relatório: Lista de candidatos Inaptos trazendo o seu nome sua cidade;*/
+SELECT c.nome, e.cidade
+	FROM candidato c 
+		INNER JOIN endereco e ON c.idCandidato = e.Candidato_idCandidato WHERE c.statusCandidato = 'Inapto';
+        
 /*3º Relatório: Lista de candidatos contratados trazendo o nome sua pretensão salarial e o id da vaga;*/
-
+SELECT c.nome, c.pretencaoSalario, v.Vaga_idVaga
+	FROM candidato c 
+		INNER JOIN vaga_has_candidato v ON c.idCandidato = v.Candidato_idCandidato WHERE c.statusCandidato = 'Contratados';
+        
 /*4º Relatório: Lista de candidatos aprovados trazendo nome, sua pretensão salarial e sua cidade;*/
+SELECT c.nome, c.pretencaoSalario, e.cidade
+	FROM candidato c 
+		INNER JOIN endereco e ON e.Candidato_idCandidato = c.idCandidato WHERE c.statusCandidato = 'Aprovados';
 
-/*5º Relatório: Lista de candidatos que tiraram uma nota maior ou igual a 8 em Inglês trazendo seu nome, id da vaga e seu número de telefone;*/
-
+/*5º Relatório: Lista de candidatos que tiraram uma nota maior ou igual a 8 em Inglês trazendo seu nome, e seu número de telefone;*/
+SELECT c.nome, c.pretencaoSalario, t.numero
+	FROM candidato c 
+		INNER JOIN telefone t ON t.Candidato_idCandidato = c.idCandidato WHERE c.notaIdioma >= 8;
+        
 /*6º Relatório: Lista de candidatos que tiraram uma nota maior ou igual a 9 em SQL trazendo seu nome pretensão salarial e cidade;*/
-
+SELECT c.nome, c.pretencaoSalario, e.cidade
+	FROM candidato c 
+		INNER JOIN endereco e ON e.Candidato_idCandidato = c.idCandidato WHERE c.notaSql >= 9;
+        
 /*7º Relatório: Lista de candidatos que tiraram uma nota maior ou igual a 7 em lógica de programação trazendo seu nome, seu cep e seu número;*/
-
+SELECT c.nome, e.CEP, t.numero
+	FROM candidato c 
+		INNER JOIN endereco e ON e.Candidato_idCandidato = c.idCandidato
+        INNER JOIN telefone t ON t.Candidato_idCandidato = c.idCandidato WHERE c.notaLogica >= 7;
+        
 /*8º Relatório: Lista de candidatos com o nível CL13  trazendo sua descrição técnica, email e seu número;*/
-
+SELECT c.nome, c.descricaoTecnica, t.numero
+	FROM candidato c 
+		INNER JOIN telefone t ON t.Candidato_idCandidato = c.idCandidato WHERE c.nivel >= 'CL13';
+        
 /*9º Relatório: Lista de candidatos que moram em Recife trazendo seu nome, sua cidade e sua rua;*/
-
+SELECT c.nome, e.cidade, e.rua
+	FROM candidato c 
+		INNER JOIN endereco e ON e.Candidato_idCandidato = c.idCandidato WHERE e.cidade>= 'Recife';
+        
 /*10º Relatório: Lista de candidatos que moram em Olinda trazendo seu nome, seu número e seu bairro;*/
-
+SELECT c.nome, t.numero, e.bairro
+	FROM candidato c 
+		INNER JOIN telefone t ON t.Candidato_idCandidato = c.idCandidato
+		INNER JOIN endereco e ON e.Candidato_idCandidato = c.idCandidato WHERE e.cidade>= 'Olinda';
+        
 /*11º Relatório: Lista de candidatos que têm o nível CL06 e que moram em Recife trazendo o id do candidato e seu bairro;*/
-
+SELECT c.idCandidato, e.bairro
+	FROM candidato c 
+		INNER JOIN endereco e ON e.Candidato_idCandidato = c.idCandidato WHERE c.nivel >= 'CL06';
+        
 /*12º Relatório: Lista de Candidatos que tem sua pretenção salarial entre 2.000 e 5.000 trazendo seu nome, seu nível e sua cidade;*/
-
+SELECT c.nome, c.nivel, e.cidade
+	FROM candidato c 
+		INNER JOIN endereco e ON e.Candidato_idCandidato = c.idCandidato WHERE c.pretencaoSalario>= 2000.00 AND c.pretencaoSalario <= 5000.00;
+        
 /*13º Relatório: Lista de Vagas com o tempo de alocação para o mês 5 de 2023 trazendo o nome da vaga o seu tempo de alocação e o id do candidato;*/
-
+SELECT v.nomeVaga, v.tempoAlocacao, c.idCandidato
+	FROM vaga v
+	INNER JOIN vaga_has_candidato vc ON vc.Vaga_idVaga = v.idVaga
+	INNER JOIN candidato c ON vc.Candidato_idCandidato = c.idCandidato
+    WHERE v.tempoAlocacao = '2023-05-05'
+    ORDER BY v.tempoAlocacao;
+    
 /*14º Relatório: Lista de Vagas que tem Inglês como idioma requerido trazendo o nome da vaga, o id do candidato e seu número;*/
-
+SELECT v.nomeVaga, c.idCandidato, t.numero
+	FROM vaga v
+	INNER JOIN vaga_has_candidato vc ON vc.Vaga_idVaga = v.idVaga
+	INNER JOIN candidato c ON vc.Candidato_idCandidato = c.idCandidato
+    INNER JOIN telefone t ON t.Candidato_idCandidato = c.idCandidato
+    WHERE v.idiomaReq = 'Inglês';
+    
 /*15º Relatório: Lista de Vagas que tem tenha como descrição “Desenvolver e implementar bases de dados” trazendo seu nome e o id do candidato;*/
-
+SELECT v.nomeVaga, c.idCandidato
+	FROM vaga v
+	INNER JOIN vaga_has_candidato vc ON vc.Vaga_idVaga = v.idVaga
+	INNER JOIN candidato c ON vc.Candidato_idCandidato = c.idCandidato
+    WHERE v.descricaoVaga= 'Desenvolver e implementar bases de dados';
+    
 /*16º Relatório: Lista de Vagas com a localidade de Recife trazendo seu nome o tempo de alocação e seu candidato;*/
-
+SELECT v.nomeVaga, v.tempoAlocacao, c.idCandidato
+	FROM vaga v
+	INNER JOIN vaga_has_candidato vc ON vc.Vaga_idVaga = v.idVaga
+	INNER JOIN candidato c ON vc.Candidato_idCandidato = c.idCandidato
+    WHERE v.localidade= 'Recife - PE';
+    
 /*17º Relatório: Lista de Vagas com a localidade de Olinda trazendo seu nome o tempo de alocação e seu candidato;*/
-
-/*18º Relatório: Lista de entrevista que foram ou irão ser realizadas de 11 horas trazendo o seu dia e o id do candidato;*/
-
-/*19º Relatório: Lista de entrevista que iram ocorrer em 2022 trazendo sua data e hora e o id do seu candidato;*/
-
+SELECT v.nomeVaga, v.tempoAlocacao, c.nome
+	FROM vaga v
+	INNER JOIN vaga_has_candidato vc ON vc.Vaga_idVaga = v.idVaga
+	INNER JOIN candidato c ON vc.Candidato_idCandidato = c.idCandidato
+    WHERE v.localidade = 'Olinda - PE'
+    ORDER BY v.tempoAlocacao;
+    
+/*18º Relatório: Lista de entrevista marcadas para o dia 4 de janeiro trazendo o seu dia e o id do candidato;*/
+SELECT 	e.dataEntrevista, c.nome
+	FROM entrevista e
+	INNER JOIN candidato c ON e.Candidato_idCandidato = c.idCandidato
+	WHERE e.dataEntrevista >= '2023-01-04 00:00:00%'
+	ORDER BY e.dataEntrevista;
+            
+/*19º Relatório: Lista de entrevista que iram ocorrer em 2022 trazendo sua data e hora e o nome do seu candidato;*/
+SELECT 	e.dataEntrevista, c.nome
+	FROM entrevista e
+		INNER JOIN candidato c ON e.Candidato_idCandidato = c.idCandidato WHERE e.dataEntrevista >= '2022-01-03%' AND e.dataEntrevista < '2023-01-03%'
+			ORDER BY e.dataEntrevista;
+            
 /*20º Relatório: Lista de entrevista que iram ocorrer em 2023 trazendo sua data e hora e o id do seu candidato;*/
-
+SELECT 	e.dataEntrevista, c.nome
+	FROM entrevista e
+		INNER JOIN candidato c ON e.Candidato_idCandidato = c.idCandidato WHERE e.dataEntrevista >= '2023-01-03%'
+			ORDER BY e.dataEntrevista;
 -- -----------------------------------------------------
 -- Procedures e funções
 -- -----------------------------------------------------
@@ -332,9 +426,35 @@ WHERE idCandidato = id;
 END$$
 DELIMITER ;
 
-CALL buscarCandidatoPorID(18);
+CALL buscarCandidatoPorID(11);
 /*DROP PROCEDURE buscarCandidatoPorID;*/
 
+DELIMITER $$
+CREATE PROCEDURE deletarCandidatoPorId(id int)
+BEGIN
+DELETE FROM `candidato`
+WHERE idCandidato = id;
+END$$
+DELIMITER $$
+
+CALL deletarCandidatoPorId(10);
+/*DROP PROCEDURE deletarCandidatoPorId;*/
+
+
+DELIMITER $$
+CREATE PROCEDURE atualizarCandidatoPorId(
+idPassado int,
+nomePassado VARCHAR(60),
+pretencaoSalarioPassado DOUBLE(7,2) )
+BEGIN
+	UPDATE `candidato`
+	SET nome = nomePassado,
+	pretencaoSalario = pretencaoSalarioPassado
+	WHERE (idCandidato = idPassado);
+END $$
+DELIMITER $$
+
+CALL atualizarCandidatoPorId(11, 'igor', 3000.00);
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
