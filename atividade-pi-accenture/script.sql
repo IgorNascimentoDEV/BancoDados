@@ -247,7 +247,7 @@ CREATE VIEW relatorio01 AS
 	SELECT nome,statusCandidato FROM `candidato`
 		WHERE statusCandidato = 'Entrevistar'
 			ORDER BY nome;
-            
+          
 CREATE VIEW relatorio02 AS
 	SELECT nome,statusCandidato FROM `candidato`
 		WHERE statusCandidato = 'Aprovados'
@@ -426,7 +426,7 @@ WHERE idCandidato = id;
 END$$
 DELIMITER ;
 
-CALL buscarCandidatoPorID(11);
+CALL buscarCandidatoPorID(10);
 /*DROP PROCEDURE buscarCandidatoPorID;*/
 
 DELIMITER $$
@@ -435,11 +435,10 @@ BEGIN
 DELETE FROM `candidato`
 WHERE idCandidato = id;
 END$$
-DELIMITER $$
+DELIMITER ;
 
 CALL deletarCandidatoPorId(10);
 /*DROP PROCEDURE deletarCandidatoPorId;*/
-
 
 DELIMITER $$
 CREATE PROCEDURE atualizarCandidatoPorId(
@@ -452,9 +451,121 @@ BEGIN
 	pretencaoSalario = pretencaoSalarioPassado
 	WHERE (idCandidato = idPassado);
 END $$
-DELIMITER $$
+DELIMITER ;
 
 CALL atualizarCandidatoPorId(11, 'igor', 3000.00);
+/*DROP PROCEDURE atualizarCandidatoPorId;*/
+
+DELIMITER $$
+CREATE PROCEDURE buscarVagaPorID (id int)
+BEGIN
+SELECT CONCAT('Nome da vaga: ', nomeVaga) AS nomeVaga
+FROM `vaga`
+WHERE idVaga = id;
+END$$
+DELIMITER ;
+
+CALL buscarVagaPorID(100002);
+/*DROP PROCEDURE uscarVagaPorID;*/
+
+DELIMITER $$
+CREATE PROCEDURE inserirCandidato(
+  cpfPassado VARCHAR(15),
+  nomePassado VARCHAR(60),
+  emailPassado VARCHAR(90),
+  pretencaoSalarioPassado DOUBLE,
+  notaIdiomaPassado INT,
+  notaLogicaPassado INT,
+  notaSqlPassado INT,
+  statusPassado VARCHAR(15),
+  descricaoTecnicaPassado VARCHAR(60))
+BEGIN
+	INSERT INTO `candidato` (
+    `cpf`, 
+    `nome`, 
+    `email`, 
+    `pretencaoSalario`,
+    `notaIdioma`,
+    `notaLogica`, 
+    `notaSql`,
+    `statusCandidato`,
+    `descricaoTecnica`)
+	VALUE( 
+    cpfPassado,
+    nomePassado,
+    emailPassado,
+    pretencaoSalarioPassado,
+    notaIdiomaPassado,
+    notaLogicaPassado,
+    notaSqlPassado,
+    statusPassado,
+    descricaoTecnicaPassado);
+END $$
+DELIMITER ;
+	
+CALL inserirCandidato('778.567.710-20', 'Danilo', 'Danilo000@gmail.com', 3000.00, 10, 10, 10, 'Entrevistar', 'teste');
+/*DROP PROCEDURE inserirCandidato;*/
+
+DELIMITER $$
+CREATE FUNCTION verDataEntrevistaPorIdCandidato(id int) 
+RETURNS DATETIME
+BEGIN
+	RETURN (SELECT dataEntrevista FROM `entrevista`
+		WHERE Candidato_idCandidato = id);
+END $$
+DELIMITER ;
+
+SELECT verDataEntrevistaPorIdCandidato(10);
+
+DELIMITER $$
+CREATE FUNCTION verStatusCandidatoId(id int) 
+RETURNS VARCHAR(15)
+BEGIN
+	RETURN (SELECT statusCandidato FROM `candidato`
+		WHERE idCandidato = id);
+END $$
+DELIMITER ;
+
+SELECT verStatusCandidatoId(27);
+
+SELECT *FROM candidato;
+
+DELIMITER $$
+CREATE FUNCTION verPretencaoSalarioCandidatoId(id int) 
+RETURNS DOUBLE(7,2)
+BEGIN
+	RETURN (SELECT pretencaoSalario FROM `candidato`
+		WHERE idCandidato = id);
+END $$
+DELIMITER ;
+
+SELECT verPretencaoSalarioCandidatoId(10);
+
+DELIMITER $$
+CREATE FUNCTION verContatoCandidatoId(id int) 
+RETURNS VARCHAR(20)
+BEGIN
+	RETURN (SELECT email FROM `candidato`
+		WHERE idCandidato = id);
+END $$
+DELIMITER ;
+
+SELECT verContatoCandidatoId(10);
+
+DELIMITER $$
+CREATE FUNCTION verCandidatoPorVagaId(id int) 
+RETURNS VARCHAR(20)
+BEGIN
+	RETURN (SELECT c.nome 
+		FROM vaga v
+			INNER JOIN vaga_has_candidato vc ON vc.Vaga_idVaga = v.idVaga
+			INNER JOIN candidato c ON vc.Candidato_idCandidato = c.idCandidato 
+			WHERE v.idVaga = id);
+END $$
+DELIMITER ;
+
+SELECT verCandidatoPorVagaId(100000);
+
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
